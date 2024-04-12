@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AF Tools FAIRness Scoring</title>
+<script src="tools_fairness_scoring.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        margin: 1rem 10rem;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    #form-container,
+    #results-container {
+        display: flex;
+        flex-flow: row wrap;
+        gap: 40px;
+    }
+    #form-container-1,
+    #form-container-2 {
+        flex: 1;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+    label:first-child {
+        font-weight: bold;
+    }
+    input[type="checkbox"] {
+        margin: 2px 5px;
+        float: left;
+    }
+    select, input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    #title {
+        text-align: center;
+    }
+    #btn-container {
+        flex: 1
+    }
+    #fair-container {
+        flex: 3;
+        text-align: right;
+    }
+    button {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    #fair-container h3 {
+        margin-top: 28px;
+    }
+</style>
+</head>
+<body>
+    <div id="title">
+        <h1>AF Tools FAIRness Scoring</h1>
+    </div>
+    <div id="form-container">
+        <div id="form-container-1">
+            <!-- Form groups will be dynamically generated here -->
+        </div>
+        <div id="form-container-2">
+            <!-- Form groups will be dynamically generated here -->
+        </div>
+    </div>
+    <div id="results-container">
+        <div id="btn-container">
+            <button id="submit-btn">Submit</button>
+        </div>
+        <div id="fair-container">
+        </div>
+    </div>
+
+<script>
+
+    function populateOptions(elementId, options) {
+        const selectElement = document.getElementById(elementId);
+        options.forEach(option => {
+            const optionElement = document.createElement("option");
+            optionElement.value = option;
+            optionElement.textContent = option;
+            selectElement.appendChild(optionElement);
+        });
+    }
+
+    function initializeForm(formData) {
+        var nr = 1
+        var split = Math.round(formData.length/2)-3
+        formData.forEach(data => {
+            const formGroup = document.createElement('div');
+            formGroup.classList.add('form-group');
+            formGroup.id = data.id;
+            const label = document.createElement('label');
+            label.textContent = data.text;
+            label.setAttribute('for', data.id + '_select');
+            formGroup.appendChild(label);
+
+            if (data.type === 'array of tags') {
+                data.answers.forEach(answer => {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `${data.id}_${answer}`;
+                    checkbox.value = answer;
+                    const checkboxLabel = document.createElement('label');
+                    checkboxLabel.textContent = answer;
+                    checkboxLabel.setAttribute('for', `${data.id}_${answer}`);
+                    formGroup.appendChild(checkbox);
+                    formGroup.appendChild(checkboxLabel);
+                });
+            } else {
+                const select = document.createElement('select');
+                select.id = data.id + '_select';
+                select.required = true;
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                defaultOption.textContent = 'Select an option';
+                select.appendChild(defaultOption);
+                data.answers.forEach(answer => {
+                    const option = document.createElement('option');
+                    option.value = answer;
+                    option.textContent = answer;
+                    select.appendChild(option);
+                });
+                formGroup.appendChild(select);
+            }
+
+            if (split-- == 0) {
+                nr = 2
+            }
+            document.getElementById('form-container-' + nr).appendChild(formGroup);
+        });
+    }
+
+    /*function initializeForm(formData) {
+        var nr = 1
+        var split = Math.round(formData.length/2)
+        formData.forEach(data => {
+            const formGroup = document.createElement('div');
+            formGroup.classList.add('form-group');
+            formGroup.id = data.id;
+            const label = document.createElement('label');
+            label.textContent = data.text;
+            label.setAttribute('for', data.id + '_select');
+            const select = document.createElement('select');
+            select.id = data.id + '_select';
+            select.required = true;
+            if (data.type === 'array of tags') {
+                select.multiple = true;
+            }
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            defaultOption.textContent = 'Select an option';
+            select.appendChild(defaultOption);
+            formGroup.appendChild(label);
+            formGroup.appendChild(select);
+            if (split-- == 0) {
+                nr = 2
+            }
+            document.getElementById('form-container-' + nr).appendChild(formGroup);
+            populateOptions(data.id + '_select', data.answers);
+        });
+    }*/
+    
+    fetch('tools_form.json')
+        .then(response => response.json())
+        .then(function(data) {
+            const formData = Array.from(data).filter(elem => 'fair' in elem)
+            initializeForm(formData);
+
+            document.getElementById("submit-btn").addEventListener("click", function(event) {
+                event.preventDefault();
+                const formDataObject = {};
+                formData.forEach(data => {
+                    if (data.type === 'array of tags') {
+                        formDataObject[data.id] = [];
+                        data.answers.forEach(answer => {
+                            const checkbox = document.getElementById(`${data.id}_${answer}`);
+                            if (checkbox.checked) {
+                                formDataObject[data.id].push(checkbox.value);
+                            }
+                        });
+                    } else {
+                        formDataObject[data.id] = document.getElementById(data.id + '_select').value;
+                    }
+                });
+
+                var FAIR = new FAIRness_scoring()
+                var scores = FAIR.score(formDataObject)
+
+                var container = document.getElementById('fair-container')
+                container.innerHTML = '';
+                var result = document.createElement('h3');
+                result.innerText = "Findability: " + scores.F + "%, Accessibility: " + scores.A + "%, Interoperability: " + scores.I + "%, Reusability: " + scores.R
+                container.appendChild(result);
+            });
+        })
+        .catch(error => console.log(error));
+</script>
+</body>
+</html>

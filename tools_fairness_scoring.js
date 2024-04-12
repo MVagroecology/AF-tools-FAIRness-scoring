@@ -5,16 +5,18 @@
  * 
  * Usage example:
  * 
- * var FAIR = new FAIRness_score()
- * FAIR.score() // returns an object with the four scorings { F: ..., A: ..., I: ..., R: ... }
- * FAIR.score_f() // returns the value of the Findability scoring
- * FAIR.score_a() // returns the value of the Accessbility scoring
- * FAIR.score_i() // returns the value of the Interoperability scoring
- * FAIR.score_r() // returns the value of the Reusability scoring
+ * var FAIR = new FAIRness_scoring()
+ * FAIR.score(tool) // returns an object with the four scorings { F: ..., A: ..., I: ..., R: ... }
+ * FAIR.score_f(tool) // returns the value of the Findability scoring
+ * FAIR.score_a(tool) // returns the value of the Accessbility scoring
+ * FAIR.score_i(tool) // returns the value of the Interoperability scoring
+ * FAIR.score_r(tool) // returns the value of the Reusability scoring
+ * 
+ * The 'tool' should be an Object containing the needed information from the 'tool_form.json'
  * 
  */
 
-function FAIRness_score() {
+function FAIRness_scoring() {
     const _version = "1.0"
 
     function round(score) {
@@ -30,7 +32,7 @@ function FAIRness_score() {
         return Math.max(...arr_numbers)
     }
 
-    function score_f() {
+    function score_f(tool) {
 
         var F1 = tool.url_persistent == "Yes" ? 1 : 0
         var F2 = tool.documentation_available == "Yes" ? 1 : 0
@@ -39,7 +41,7 @@ function FAIRness_score() {
         return round((F1 + F2 + F3) / 3)
     }
 
-    function score_a() {
+    function score_a(tool) {
 
         var A1 = 0
         if (tool.access_barrier.trim()) {
@@ -95,14 +97,18 @@ function FAIRness_score() {
         }
 
         var A5 = 0
-        if (tool.url_training_materials.trim()) {
-          A5 = 1
+        if (tool.training_materials.trim()) {
+            A5 = {
+              "Yes": 1,
+              "No": 0,
+              "Don't know": 0
+            }[tool.training_materials]
         }
 
         return round((A1 + A2 + A3 + A4 + A5) / 5)
     }
 
-    function score_i() {
+    function score_i(tool) {
 
         var subcriteria_count = 6
 
@@ -208,10 +214,10 @@ function FAIRness_score() {
           }[tool.integrated_other_tools]
         }
         
-        return round((I1 + I2 + I3 + I4 + I5 + I6) / count)
+        return round((I1 + I2 + I3 + I4 + I5 + I6) / subcriteria_count)
     }
 
-    function score_r() {
+    function score_r(tool) {
         var R1 = 0
         if (tool.license.trim()) {
             R1 = {
