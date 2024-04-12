@@ -44,7 +44,7 @@ function FAIRness_scoring() {
     function score_a(tool) {
 
         var A1 = 0
-        if (tool.access_barrier.trim()) {
+        if (tool.access_barrier) {
           A1 = {
             "No, direct download/access through a web link": 1,
             "User registration needed": 1,
@@ -54,7 +54,7 @@ function FAIRness_scoring() {
         }
 
         var A2 = 0
-        if (tool.documentation_accessible.trim()) {
+        if (tool.documentation_accessible) {
           A2 = {
             "Yes": 1,
             "Some of it": 0.5,
@@ -70,12 +70,14 @@ function FAIRness_scoring() {
             "Internet connection": 0.5,
             "Desktop computer (e.g. optimized for wider screens)": 1,
             "Mobile phone (e.g. works on small screens; use the camera)": 1,
+            "Open source software/programming language": 1,
             "Licensed software/programming language": 0,
             "Virtual reality headset or other specialized devices": 0.2,
             "Cross-platform tool (works in Windows, Mac and Linux)": 1,
             "Specific operating system: Windows": 0.5,
             "Specific operating system: Mac": 0.5,
-            "Specific operating system: Linux": 0.5
+            "Specific operating system: Linux": 0.5,
+            "Other...": 0
           }
           for (var key in scores) {
             if (tool.minimum_req.includes(key)) {
@@ -97,7 +99,7 @@ function FAIRness_scoring() {
         }
 
         var A5 = 0
-        if (tool.training_materials.trim()) {
+        if (tool.training_materials) {
             A5 = {
               "Yes": 1,
               "No": 0,
@@ -135,7 +137,8 @@ function FAIRness_scoring() {
               "TypeScript": 1,
               "Visual Basic / VBScript": 0.5,
               "Capsis platform": 1,
-              "Oracle Apex": 0.2 // proprietary, paid
+              "Oracle Apex": 0.2, // proprietary, paid
+              "Other...": 0
             }
             if (prog_lang in prog_lang_scores) {
               I1_score.push(prog_lang_scores[prog_lang])
@@ -167,7 +170,8 @@ function FAIRness_scoring() {
             var data_formats = {
                 "Widely used file formats (CSV, JSON, XML, etc.)": 1,
                 "Custom file formats": 0,
-                "HTTP (query string parameters, data in request body & file uploads)": 1
+                "HTTP (query string parameters, data in request body & file uploads)": 1,
+                "Other...": 0
             }
             for (var data_format in data_formats) {
                 if (tool.input_data_formats.includes(data_format)) {
@@ -183,7 +187,8 @@ function FAIRness_scoring() {
             var data_formats = {
                 "Widely used file formats (CSV, JSON, XML, etc.)": 1,
                 "Custom file formats": 0,
-                "Static content (e.g. reports on website pages, tables and graphs in the tool's interface, PDF files)": 0
+                "Static content (e.g. reports on website pages, tables and graphs in the tool's interface, PDF files)": 0,
+                "Other...": 0
             }
             for (var data_format in data_formats) {
                 if (tool.output_data_formats.includes(data_format)) {
@@ -219,7 +224,7 @@ function FAIRness_scoring() {
 
     function score_r(tool) {
         var R1 = 0
-        if (tool.license.trim()) {
+        if (tool.license) {
             R1 = {
                 "MIT License": 1,
                 "Apache License 2.0": 1,
@@ -233,12 +238,13 @@ function FAIRness_scoring() {
                 "Creative Commons Zero (CC0)": 1,
                 "Proprietary": 0,
                 "Not stated": 0,
-                "Don't know": 0
+                "Don't know": 0,
+                "Other...": 0
             }[tool.license]
         }
 
         var R2 = 0
-        if (tool.data_provenance.trim()) {
+        if (tool.data_provenance) {
             R2 = {
                 "Yes": 1,
                 "Incomplete": 0.5,
@@ -248,7 +254,7 @@ function FAIRness_scoring() {
         }
 
         var R3 = 0
-        if (tool.development_process.trim()) {
+        if (tool.development_process) {
             R3 = {
                 "Yes": 1,
                 "Not completely": 0.5,
@@ -258,7 +264,7 @@ function FAIRness_scoring() {
         }
 
         var R4 = 0
-        if (tool.documentation_contribute.trim()) {
+        if (tool.documentation_contribute) {
             R4 = {
                 "Yes": 1,
                 "No": 0,
