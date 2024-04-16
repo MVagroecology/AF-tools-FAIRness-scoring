@@ -29,7 +29,7 @@
  * 
  */
 
-function TechonologyRanking() {
+function TechnologyRanking() {
 	const _version = "1.0"
 
 	const techonologies_score = {

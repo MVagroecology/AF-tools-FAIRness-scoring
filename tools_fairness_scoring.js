@@ -19,6 +19,8 @@
 function FAIRness_scoring() {
     const _version = "1.0"
 
+    const DEFAULT_SCORE_FOR_OTHER_ANSWERS = 0.2
+
     function round(score) {
         // rounding to 0-100 percentage, no decimals
         return Math.round(score * 100)
@@ -64,7 +66,7 @@ function FAIRness_scoring() {
         }
 
         var A3 = 0
-        if (tool.minimum_req) {
+        if (tool.minimum_req && tool.minimum_req.length > 0) {
           var A3_scores = []
           var scores = {
             "Internet connection": 0.5,
@@ -115,40 +117,23 @@ function FAIRness_scoring() {
         var subcriteria_count = 6
 
         var I1 = 0
-        if (tool.software_proglanguage) {
+        if (tool.software_proglanguage && tool.software_proglanguage.length > 0) {
           var I1_score = []
+          var tech_ranking = new TechnologyRanking()
+
           for (prog_lang of tool.software_proglanguage) {
-            var prog_lang_scores = {
-              "C": 1,
-              "C++": 1,
-              "C#": 0.2,
-              "Fortran": 0.2,
-              "Java": 1,
-              "Javascript": 1,
-              "Julia": 1,
-              "Matlab": 1,
-              "Microsoft Excel": 0.8,
-              "Perl": 0.2,
-              "Python": 1,
-              "R": 1,
-              "Ruby": 1,
-              "Ruby on Rails": 1,
-              "React Native": 1,
-              "TypeScript": 1,
-              "Visual Basic / VBScript": 0.5,
-              "Oracle Apex": 0.2, // proprietary, paid
-              "Other...": 0
-            }
-            if (prog_lang in prog_lang_scores) {
-              I1_score.push(prog_lang_scores[prog_lang])
+            var ranking = tech_ranking.rank(prog_lang)
+            if (ranking.status == 'success') {
+                I1_score.push(ranking.score)
+            } else { // 'error', non existent
+                I1_score.push(DEFAULT_SCORE_FOR_OTHER_ANSWERS)
             }
           }
-          
           I1 = avg(I1_score)
         }
   
         var I2 = 0
-        if (tool.input_data_protocols) {
+        if (tool.input_data_protocols && tool.input_data_protocols.length > 0) {
             var I2_score = []
             var data_protocols = {
                 "User enters the data directly manually": 0,
