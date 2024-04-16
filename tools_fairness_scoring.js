@@ -1,11 +1,11 @@
 /*!
- * FAIRness scoring function
+ * FAIRness scoring algorithm for tools
  *
  * Licensed under MIT
  * 
  * Usage example:
  * 
- * var FAIR = new FAIRness_scoring()
+ * var FAIR = new Tools_FAIRness_scoring()
  * FAIR.score(tool) // returns an object with the four scorings { F: ..., A: ..., I: ..., R: ... }
  * FAIR.score_f(tool) // returns the value of the Findability scoring
  * FAIR.score_a(tool) // returns the value of the Accessbility scoring
@@ -16,7 +16,7 @@
  * 
  */
 
-function FAIRness_scoring() {
+function Tools_FAIRness_scoring() {
     const _version = "1.0"
 
     const DEFAULT_SCORE_FOR_OTHER_ANSWERS = 0.2
