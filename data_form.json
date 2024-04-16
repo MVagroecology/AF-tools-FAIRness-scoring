@@ -1,0 +1,32 @@
+[
+  {
+    "id": "id",
+    "text": "ID (slug - exactly the same used to name the .json file)",
+    "type": "string",
+    "required": true
+  },
+  {
+    "id": "email",
+    "text": "Email",
+    "type": "email",
+    "required": true
+  },
+  {
+    "id": "name",
+    "text": "What is the name of the tool?",
+    "type": "url",
+    "required": true
+  },
+  {
+    "id": "url",
+    "text": "What is the link to the tool?",
+    "type": "string",
+    "required": true
+  },
+  {
+    "id": "description_brief",
+    "text": "Describe it briefly",
+    "type": "string",
+    "required": true
+  }
+]
