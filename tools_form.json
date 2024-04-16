@@ -151,7 +151,7 @@
       "VBA",
       "Visual Basic (.Net)",
       "Zig",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -172,7 +172,7 @@
       "Specific operating system: Windows",
       "Specific operating system: Mac",
       "Specific operating system: Linux",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -196,7 +196,7 @@
       "Proprietary",
       "Not stated",
       "Don't know",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -277,7 +277,7 @@
       "Animal welfare",
       "Mortality",
       "Pests and Diseases",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -298,7 +298,7 @@
       "Regional",
       "National",
       "Global",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -314,7 +314,7 @@
       "Monthly",
       "Yearly",
       "Not relevant",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -339,7 +339,7 @@
       "Widely used file formats (CSV, JSON, XML, etc.)",
       "Custom file formats",
       "HTTP (query string parameters, data in request body & file uploads)",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -359,7 +359,7 @@
       "NetCDF",
       "Shapefile",
       "Images (e.g. png, jpg, tiff, etc)",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -372,7 +372,7 @@
       "Widely used file formats (CSV, JSON, XML, etc.)",
       "Custom file formats",
       "Static content (e.g. reports on website pages, tables and graphs in the tool's interface, PDF files)",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -388,7 +388,7 @@
       "Shapefile",
       "Images (e.g. png, jpg, tiff, etc)",
       "PDF",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -408,7 +408,7 @@
       "Retailer",
       "Carbon trader",
       "Final consumer",
-      "Other..."
+      "Other"
     ]
   },
   {
@@ -441,7 +441,7 @@
       "French",
       "German",
       "Italian",
-      "Other..."
+      "Other"
     ]
   },
   {

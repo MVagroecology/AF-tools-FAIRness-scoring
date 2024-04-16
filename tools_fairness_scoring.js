@@ -34,6 +34,11 @@ function FAIRness_scoring() {
         return Math.max(...arr_numbers)
     }
 
+    function validAnswer(str) {
+        str = str.trim()
+        return str !== null || str !== "null" || str !== "" || str !== undefined
+    }
+
     function score_f(tool) {
 
         var F1 = tool.url_persistent == "Yes" ? 1 : 0
@@ -79,11 +84,14 @@ function FAIRness_scoring() {
             "Specific operating system: Windows": 0.5,
             "Specific operating system: Mac": 0.5,
             "Specific operating system: Linux": 0.5,
-            "Other...": 0
+            "Other": DEFAULT_SCORE_FOR_OTHER_ANSWERS
           }
-          for (var key in scores) {
-            if (tool.minimum_req.includes(key)) {
-                A3_scores.push(scores[key])
+          for (var min_req of tool.minimum_req) {
+            if (min_req in scores) {
+                A3_scores.push(scores[min_req])
+            } else if (validAnswer(min_req)) {
+                // other option
+                A3_scores.push(DEFAULT_SCORE_FOR_OTHER_ANSWERS)
             }
           }
           A3 = avg(A3_scores)
@@ -151,16 +159,19 @@ function FAIRness_scoring() {
         var I3 = 0
         if (tool.input_data_formats && tool.input_data_formats.length > 0) {
             var I3_score = []
-            var data_formats = {
+            var scores = {
                 "Widely used file formats (CSV, JSON, XML, etc.)": 1,
                 "Custom file formats": 0,
                 "HTTP (query string parameters, data in request body & file uploads)": 1,
-                "Other...": 0
+                "Other": DEFAULT_SCORE_FOR_OTHER_ANSWERS
             }
-            for (var data_format in data_formats) {
-                if (tool.input_data_formats.includes(data_format)) {
-                    I3_score.push(data_formats[data_format])
-                }
+            for (var data_format of tool.input_data_formats) {
+              if (data_format in scores) {
+                I3_score.push(scores[data_format])
+              } else if (validAnswer(data_format)) {
+                  // other option
+                  I3_score.push(DEFAULT_SCORE_FOR_OTHER_ANSWERS)
+              }
             }
             I3 = max(I3_score)
         }
@@ -168,15 +179,18 @@ function FAIRness_scoring() {
         var I4 = 0
         if (tool.output_data_formats && tool.output_data_formats.length > 0) {
             var I4_score = []
-            var data_formats = {
+            var scores = {
                 "Widely used file formats (CSV, JSON, XML, etc.)": 1,
                 "Custom file formats": 0,
                 "Static content (e.g. reports on website pages, tables and graphs in the tool's interface, PDF files)": 0,
-                "Other...": 0
+                "Other": DEFAULT_SCORE_FOR_OTHER_ANSWERS
             }
-            for (var data_format in data_formats) {
-                if (tool.output_data_formats.includes(data_format)) {
-                    I4_score.push(data_formats[data_format])
+            for (var data_format of tool.output_data_formats) {
+                if (data_format in scores) {
+                    I4_score.push(scores[data_format])
+                } else if (validAnswer(data_format)) {
+                    // other option
+                    I4_score.push(DEFAULT_SCORE_FOR_OTHER_ANSWERS)
                 }
             }
             I4 = max(I4_score)
@@ -209,7 +223,7 @@ function FAIRness_scoring() {
     function score_r(tool) {
         var R1 = 0
         if (tool.license) {
-            R1 = {
+            var scores = {
                 "MIT License": 1,
                 "Apache License 2.0": 1,
                 "GNU General Public License (GPL)": 1,
@@ -223,8 +237,14 @@ function FAIRness_scoring() {
                 "Proprietary": 0,
                 "Not stated": 0,
                 "Don't know": 0,
-                "Other...": 0
-            }[tool.license]
+                "Other": DEFAULT_SCORE_FOR_OTHER_ANSWERS
+            }
+            if (license in scores) {
+                R1 = scores[license]
+            } else if (validAnswer(license)) {
+                // other option
+                R1 = DEFAULT_SCORE_FOR_OTHER_ANSWERS
+            }
         }
 
         var R2 = 0
