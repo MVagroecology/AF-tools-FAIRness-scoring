@@ -136,7 +136,6 @@ function FAIRness_scoring() {
               "React Native": 1,
               "TypeScript": 1,
               "Visual Basic / VBScript": 0.5,
-              "Capsis platform": 1,
               "Oracle Apex": 0.2, // proprietary, paid
               "Other...": 0
             }
