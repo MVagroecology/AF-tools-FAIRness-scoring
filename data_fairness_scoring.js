@@ -39,190 +39,88 @@ function Data_FAIRness_scoring() {
         return str !== null || str !== "null" || str !== "" || str !== undefined
     }
 
-    function score_f(tool) {
+    function score_f(data) {
 
-        var F1 = tool.url_persistent == "Yes" ? 1 : 0
-        var F2 = tool.documentation_available == "Yes" ? 1 : 0
-        var F3 = tool.listed_other_databases == "Yes" ? 1 : 0
+        var F1 = data.url_persistent == "Yes" ? 1 : 0
+        var F2 = data.data_metadata == "Yes" ? 1 : 0
+        var F3 = data.listed_other_databases == "Yes" ? 1 : 0
 
         return round((F1 + F2 + F3) / 3)
     }
 
-    function score_a(tool) {
+    function score_a(data) {
 
         var A1 = 0
-        if (tool.access_barrier) {
+        if (data.access_barrier) {
           A1 = {
             "No, direct download/access through a web link": 1,
             "User registration needed": 1,
-            "Access to the tool needs to be granted (e.g. tool owner needs to give permission after user registration; tool owner sends tool after receiving a request email)": 0.5,
-            "Access to the tool is evaluated before being granted, due to ethical, legal or contractual constrains (e.g. privacy, highly sensitive data)": 0.8
-          }[tool.access_barrier]
+            "Access to the data needs to be granted (e.g. dataset owner needs to give permission after user registration; dataset owner sends data after receiving a request email)": 0.5,
+            "Access to the data is evaluated before being granted, due to ethical, legal or contractual constrains (e.g. privacy, highly sensitive data)": 0.8
+          }[data.access_barrier]
         }
 
         var A2 = 0
-        if (tool.documentation_accessible) {
+        if (data.documentation_accessible) {
           A2 = {
             "Yes": 1,
             "Some of it": 0.5,
             "No": 0,
             "Don't know": 0
-          }[tool.documentation_accessible]
+          }[data.documentation_accessible]
         }
 
-        var A3 = 0
-        if (tool.minimum_req && tool.minimum_req.length > 0) {
-          var A3_scores = []
-          var scores = {
-            "Internet connection": 0.5,
-            "Desktop computer (e.g. optimized for wider screens)": 1,
-            "Mobile phone (e.g. works on small screens; use the camera)": 1,
-            "Open source software/programming language": 1,
-            "Licensed software/programming language": 0,
-            "Virtual reality headset or other specialized devices": 0.2,
-            "Cross-platform tool (works in Windows, Mac and Linux)": 1,
-            "Specific operating system: Windows": 0.5,
-            "Specific operating system: Mac": 0.5,
-            "Specific operating system: Linux": 0.5,
-            "Other": DEFAULT_SCORE_FOR_OTHER_ANSWERS
-          }
-          for (var min_req of tool.minimum_req) {
-            if (min_req in scores) {
-                A3_scores.push(scores[min_req])
-            } else if (validAnswer(min_req)) {
-                // other option
-                A3_scores.push(DEFAULT_SCORE_FOR_OTHER_ANSWERS)
-            }
-          }
-          A3 = avg(A3_scores)
-        }
-
-        var A4 = 0
-        if (tool.languages && tool.languages.length > 0) {
-            if (tool.languages.length > 3) {
-                A4 = 1
-            } else if (tool.languages.length == 3) {
-                A4 = 0.8
-            } else if (tool.languages.length == 2) {
-                A4 = 0.5
-            }
-        }
-
-        var A5 = 0
-        if (tool.training_materials) {
-            A5 = {
-              "Yes": 1,
-              "No": 0,
-              "Don't know": 0
-            }[tool.training_materials]
-        }
-
-        return round((A1 + A2 + A3 + A4 + A5) / 5)
+        return round((A1 + A2) / 2)
     }
 
-    function score_i(tool) {
-
-        var subcriteria_count = 6
+    function score_i(data) {
 
         var I1 = 0
-        if (tool.software_proglanguage && tool.software_proglanguage.length > 0) {
-          var I1_score = []
-          var tech_ranking = new TechnologyRanking()
-
-          for (prog_lang of tool.software_proglanguage) {
-            var ranking = tech_ranking.rank(prog_lang)
-            if (ranking.status == 'success') {
-                I1_score.push(ranking.score)
-            } else { // 'error', non existent
-                I1_score.push(DEFAULT_SCORE_FOR_OTHER_ANSWERS)
+        if (data.data_formats && data.data_formats.length > 0) {
+            var I1_score = []
+            var scores = {
+                "Widely used file formats (CSV, JSON, GeoJSON, XML, TIFF, MP3, MP4, etc.)": 1,
+                "Custom file formats (database specific, not widely used)": 0,
+                "Static content (e.g. textual, reports on website pages, tables and graphs, PDF files)": 0,
+                "Other": DEFAULT_SCORE_FOR_OTHER_ANSWERS
             }
-          }
-          I1 = avg(I1_score)
+            for (var data_format of data.data_formats) {
+              if (data_format in scores) {
+                I1_score.push(scores[data_format])
+              } else if (validAnswer(data_format)) {
+                  // other option
+                  I1_score.push(DEFAULT_SCORE_FOR_OTHER_ANSWERS)
+              }
+            }
+            I1 = max(I1_score)
         }
   
         var I2 = 0
-        if (tool.input_data_protocols && tool.input_data_protocols.length > 0) {
-            var I2_score = []
-            var data_protocols = {
-                "User enters the data directly manually": 0,
-                "Data entry can be partially automated programmatically (e.g. loading files with previously defined setups)": 0.5,
-                "Data entry can be fully automated programmatically (e.g. automatically run a script for multiple scenarios)": 1
-            }
-            for (var data_protocol in data_protocols) {
-                if (tool.input_data_protocols.includes(data_protocol)) {
-                    I2_score.push(data_protocols[data_protocol])
-                }
-            }
-            I2 = max(I2_score)
-        }
-  
-        var I3 = 0
-        if (tool.input_data_formats && tool.input_data_formats.length > 0) {
-            var I3_score = []
-            var scores = {
-                "Widely used file formats (CSV, JSON, XML, etc.)": 1,
-                "Custom file formats": 0,
-                "HTTP (query string parameters, data in request body & file uploads)": 1,
-                "Other": DEFAULT_SCORE_FOR_OTHER_ANSWERS
-            }
-            for (var data_format of tool.input_data_formats) {
-              if (data_format in scores) {
-                I3_score.push(scores[data_format])
-              } else if (validAnswer(data_format)) {
-                  // other option
-                  I3_score.push(DEFAULT_SCORE_FOR_OTHER_ANSWERS)
-              }
-            }
-            I3 = max(I3_score)
-        }
-  
-        var I4 = 0
-        if (tool.output_data_formats && tool.output_data_formats.length > 0) {
-            var I4_score = []
-            var scores = {
-                "Widely used file formats (CSV, JSON, XML, etc.)": 1,
-                "Custom file formats": 0,
-                "Static content (e.g. reports on website pages, tables and graphs in the tool's interface, PDF files)": 0,
-                "Other": DEFAULT_SCORE_FOR_OTHER_ANSWERS
-            }
-            for (var data_format of tool.output_data_formats) {
-                if (data_format in scores) {
-                    I4_score.push(scores[data_format])
-                } else if (validAnswer(data_format)) {
-                    // other option
-                    I4_score.push(DEFAULT_SCORE_FOR_OTHER_ANSWERS)
-                }
-            }
-            I4 = max(I4_score)
-        }
-  
-        var I5 = 0
-        if (tool.previous_versions_available) {
-          I5 = {
-            "Yes": 1,
-            "No": 0,
-            "Only one version exists": 0, // not scored
-            "Don't know": 0
-          }[tool.previous_versions_available]
-
-          if (tool.previous_versions_available == "Only one version exists") subcriteria_count--
-        }
-  
-        var I6 = 0
-        if (tool.integrated_other_tools) {
-          I6 = {
+        if (data.data_metadata_vocabulary) {
+          I2 = {
             "Yes": 1,
             "No": 0,
             "Don't know": 0
-          }[tool.integrated_other_tools]
+          }[data.data_metadata_vocabulary]
         }
         
-        return round((I1 + I2 + I3 + I4 + I5 + I6) / subcriteria_count)
+        return round((I1 + I2) / 2)
     }
 
-    function score_r(tool) {
+    function score_r(data) {
+        
         var R1 = 0
-        if (tool.license) {
+        if (data.data_relevant_attributes) {
+            R1 = {
+                "Yes": 1,
+                "Not completely": 0.5,
+                "No": 0,
+                "Don't know": 0
+            }[data.data_relevant_attributes]
+        }       
+        
+        var R2 = 0
+        if (data.license) {
             var scores = {
                 "MIT License": 1,
                 "Apache License 2.0": 1,
@@ -239,53 +137,34 @@ function Data_FAIRness_scoring() {
                 "Don't know": 0,
                 "Other": DEFAULT_SCORE_FOR_OTHER_ANSWERS
             }
-            if (license in scores) {
-                R1 = scores[license]
-            } else if (validAnswer(license)) {
+            if (data.license in scores) {
+                R2 = scores[data.license]
+            } else if (validAnswer(data.license)) {
                 // other option
-                R1 = DEFAULT_SCORE_FOR_OTHER_ANSWERS
+                R2 = DEFAULT_SCORE_FOR_OTHER_ANSWERS
             }
         }
 
-        var R2 = 0
-        if (tool.data_provenance) {
-            R2 = {
-                "Yes": 1,
-                "Incomplete": 0.5,
-                "No": 0,
-                "Don't know": 0
-            }[tool.data_provenance]
-        }
-
         var R3 = 0
-        if (tool.development_process) {
+        if (data.development_process) {
             R3 = {
                 "Yes": 1,
                 "Not completely": 0.5,
                 "No": 0,
                 "Don't know": 0
-            }[tool.development_process]
-        }
+            }[data.development_process]
+        }       
 
-        var R4 = 0
-        if (tool.documentation_contribute) {
-            R4 = {
-                "Yes": 1,
-                "No": 0,
-                "Don't know": 0
-            }[tool.documentation_contribute]
-        }
-
-        return round((R1 + R2 + R3 + R4) / 4)
+        return round((R1 + R2 + R3) / 3)
     }
 
     return {
-        score(tool) {
+        score(data) {
             return {
-                F: score_f(tool),
-                A: score_a(tool),
-                I: score_i(tool),
-                R: score_r(tool)
+                F: score_f(data),
+                A: score_a(data),
+                I: score_i(data),
+                R: score_r(data)
             }
         },
         score_f: score_f,

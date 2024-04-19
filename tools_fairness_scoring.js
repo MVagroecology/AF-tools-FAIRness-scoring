@@ -239,9 +239,9 @@ function Tools_FAIRness_scoring() {
                 "Don't know": 0,
                 "Other": DEFAULT_SCORE_FOR_OTHER_ANSWERS
             }
-            if (license in scores) {
-                R1 = scores[license]
-            } else if (validAnswer(license)) {
+            if (tool.license in scores) {
+                R1 = scores[tool.license]
+            } else if (validAnswer(tool.license)) {
                 // other option
                 R1 = DEFAULT_SCORE_FOR_OTHER_ANSWERS
             }

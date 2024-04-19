@@ -120,7 +120,7 @@
     ]
   },
   {
-    "id": "data_license",
+    "id": "license",
     "text": "What is the usage rights license for the dataset?",
     "short_text": "License",
     "type": "tag",
@@ -172,7 +172,7 @@
     "id": "data_formats",
     "text": "What is the format of the data?",
     "type": "array of tags",
-    "required": false,
+    "required": true,
     "fair": "I1",
     "answers": [
       "Widely used file formats (CSV, JSON, GeoJSON, XML, TIFF, MP3, MP4, etc.)",
@@ -182,7 +182,7 @@
     ]
   },
   {
-    "id": "data_formats",
+    "id": "data_metadata_vocabulary",
     "text": "Does the metadata file follow any controlled vocabularies, keywords, thesauri or ontologies?",
     "type": "tag",
     "required": false,
@@ -243,7 +243,7 @@
     ]
   },
   {
-    "id": "development_process",
+    "id": "data_relevant_attributes",
     "text": "The data is accurate and well described with many relevant attributes?",
     "type": "tag",
     "required": true,

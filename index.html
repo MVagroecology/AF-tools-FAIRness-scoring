@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agroforestry Tools FAIRness Scoring</title>
-<script src="techonology_ranking.js"></script>
-<script src="tools_fairness_scoring.js"></script>
-<script src="data_fairness_scoring.js"></script>
+<title>Agroforestry FAIRness Scoring</title>
 <style>
+    html,
+    body {
+        height: 100%;
+    }
     body {
         font-family: Arial, sans-serif;
         font-size: 14px;
@@ -102,153 +103,42 @@
         margin-top: 28px;
     }
     footer {
-        position: sticky;
+        position: absolute;
         bottom: 0;
         background-color: #f4f4f4;
         font-size: 80%;
-        padding: 10px;
-        margin: 0 -10px;
+        padding: 10px 0;
         text-align: center;
+        width: 100%;
+        left: 0;
     }
     footer p {
         margin: 0;
         padding: 0;
     }
+    #options {
+        display: table;
+        width: 100%;
+        text-align: center;
+    }
+    #options > div {
+        display: inline-block;
+        width: 50%;
+    }
 </style>
 </head>
 <body>
     <div id="title">
-        <h1>Agroforestry Tools FAIRness Scoring</h1>
+        <h1>Agroforestry FAIRness Scoring</h1>
     </div>
-    <div id="results-container">
-        <div id="fair-f">
-            <p>Findability</p>
-            <p id="fair-f-score">0%</p>
-        </div>
-        <div id="fair-a">
-            <p>Accessibility</p>
-            <p id="fair-a-score">0%</p>
-        </div>
-        <div id="fair-i">
-            <p>Interoperability</p>
-            <p id="fair-i-score">0%</p>
-        </div>
-        <div id="fair-r">
-            <p>Reusability</p>
-            <p id="fair-r-score">0%</p>
-        </div>
-    </div>
-    <div id="form-container">
-        <div id="form-container-1">
-            <!-- Form groups will be dynamically generated here -->
-        </div>
-        <div id="form-container-2">
-            <!-- Form groups will be dynamically generated here -->
-        </div>
+    <div id="options">
+        <div><h1><a href="tools.html">Tools</a></h1></div>
+        <div><h1><a href="data.html">Data</a></h1></div>
     </div>
     <footer><p>This FAIRness score calculator was developed under the EU project <a href="https://digitaf.eu/" target="_blank">DigitAF</a> (grant agreement 101059794), as part of Deliverable 2.4, and is intended to evolve according to needs.</p></footer>
 
 <script>
     
-    var FAIR = new Tools_FAIRness_scoring()
-    var formDataObject = {}
-
-    function populateOptions(elementId, options) {
-        const selectElement = document.getElementById(elementId);
-        options.forEach(option => {
-            const optionElement = document.createElement("option");
-            optionElement.value = option;
-            optionElement.textContent = option;
-            selectElement.appendChild(optionElement);
-        });
-    }
-
-    function initializeForm(formData) {
-        var nr = 1
-        var split = 4
-        formData.forEach(data => {
-            const formGroup = document.createElement('div');
-            formGroup.classList.add('form-group');
-            formGroup.id = data.id;
-            const label = document.createElement('label');
-            label.textContent = data.text;
-            label.setAttribute('for', data.id + '_select');
-            formGroup.appendChild(label);
-            const criteria = document.createElement('small');
-            criteria.textContent = " [ " + data.fair + " ] "
-            label.appendChild(criteria)
-
-            if (data.type === 'array of tags') {
-                data.answers.forEach(answer => {
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.id = `${data.id}_${answer}`;
-                    checkbox.value = answer;
-                    const checkboxLabel = document.createElement('label');
-                    checkboxLabel.textContent = answer;
-                    checkboxLabel.setAttribute('for', `${data.id}_${answer}`);
-                    checkbox.addEventListener('change', function() {
-                        updateFormDataObject(data);
-                    });
-                    formGroup.appendChild(checkbox);
-                    formGroup.appendChild(checkboxLabel);
-                });
-            } else {
-                const select = document.createElement('select');
-                select.id = data.id + '_select';
-                select.required = true;
-                const defaultOption = document.createElement('option');
-                defaultOption.value = '';
-                defaultOption.disabled = true;
-                defaultOption.selected = true;
-                defaultOption.textContent = 'Select an option';
-                select.appendChild(defaultOption);
-                data.answers.forEach(answer => {
-                    const option = document.createElement('option');
-                    option.value = answer;
-                    option.textContent = answer;
-                    select.appendChild(option);
-                });
-                select.addEventListener('change', function() {
-                    updateFormDataObject(data);
-                });
-                formGroup.appendChild(select);
-            }
-
-            if (split-- == 0) {
-                nr = 2
-            }
-            document.getElementById('form-container-' + nr).appendChild(formGroup);
-        });
-    }
-
-    function updateFormDataObject(data) {
-        if (data.type === 'array of tags') {
-            formDataObject[data.id] = [];
-            data.answers.forEach(answer => {
-                const checkbox = document.getElementById(`${data.id}_${answer}`);
-                if (checkbox.checked) {
-                    formDataObject[data.id].push(checkbox.value);
-                }
-            });
-        } else {
-            formDataObject[data.id] = document.getElementById(data.id + '_select').value;
-        }
-        
-        var scores = FAIR.score(formDataObject)
-        document.getElementById('fair-f-score').innerText = scores.F + "%"
-        document.getElementById('fair-a-score').innerText = scores.A + "%"
-        document.getElementById('fair-i-score').innerText = scores.I + "%"
-        document.getElementById('fair-r-score').innerText = scores.R + "%"
-    }
-
-    fetch('tools_form.json')
-        .then(response => response.json())
-        .then(function(data) {
-            const formData = Array.from(data).filter(elem => 'fair' in elem)
-            initializeForm(formData);
-        })
-        .catch(error => console.log(error));
 </script>
 </body>
 </html>
