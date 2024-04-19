@@ -13,20 +13,267 @@
   },
   {
     "id": "name",
-    "text": "What is the name of the tool?",
+    "text": "What is the name of the dataset?",
     "type": "url",
     "required": true
   },
   {
     "id": "url",
-    "text": "What is the link to the tool?",
+    "text": "What is the link to the dataset?",
     "type": "string",
     "required": true
+  },
+  {
+    "id": "url_persistent",
+    "text": "Is the link to the dataset a unique and persistent identifier?",
+    "type": "tag",
+    "required": true,
+    "fair": "F1",
+    "answers": [
+      "Yes",
+      "No"
+    ]
   },
   {
     "id": "description_brief",
     "text": "Describe it briefly",
     "type": "string",
     "required": true
+  },
+  {
+    "id": "keywords",
+    "text": "Which keywords best describe the dataset?",
+    "type": "array of strings",
+    "required": true
+  },
+  {
+    "id": "data_ownership",
+    "text": "Who, or which organization, is the data owner?",
+    "type": "string",
+    "required": true
+  },
+  {
+    "id": "data_contact",
+    "text": "Provide some contact information regarding the dataset",
+    "type": "string",
+    "required": false
+  },
+  {
+    "id": "data_collection_country",
+    "text": "Country (or region) where the data was collected?",
+    "type": "array of tags",
+    "required": true,
+    "answers": [
+      "Belgium",
+      "Czech Republic",
+      "Finland",
+      "France",
+      "Germany",
+      "Italy",
+      "Netherlands",
+      "United Kingdom",
+      "Europe",
+      "Global",
+      "Other"
+    ]
+  },
+  {
+    "id": "data_origin",
+    "text": "Was the data collected during the DigitAF project?",
+    "type": "tag",
+    "required": true,
+    "answers": [
+      "Yes",
+      "No, it was collected within another project",
+      "No, it has another source"
+    ]
+  },
+  {
+    "id": "data_type",
+    "text": "Type of data?",
+    "type": "tag",
+    "required": true,
+    "answers": [
+      "Aggregated data",
+      "Analysis data",
+      "Audiovisual corpus",
+      "Computer code",
+      "Experimental data",
+      "Observational data",
+      "Simulation data",
+      "Spatial data",
+      "Survey data",
+      "Text corpus",
+      "Other"
+    ]
+  },
+  {
+    "id": "data_confidentiality",
+    "text": "Is the data confidential?",
+    "type": "tag",
+    "required": true,
+    "answers": [
+      "No, the data is public",
+      "Yes, it is confidential data",
+      "Data embargo, i.e there are rules or limits on using, sharing, or spreading it",
+      "Data has a limiting license"
+    ]
+  },
+  {
+    "id": "data_license",
+    "text": "What is the usage rights license for the dataset?",
+    "short_text": "License",
+    "type": "tag",
+    "required": true,
+    "fair": "R2",
+    "answers": [
+      "MIT License",
+      "Apache License 2.0",
+      "GNU General Public License (GPL)",
+      "Creative Commons BY",
+      "Creative Commons BY-SA",
+      "Creative Commons BY-NC",
+      "Creative Commons BY-NC-SA",
+      "Creative Commons BY-ND",
+      "Creative Commons BY-NC-ND",
+      "Creative Commons Zero (CC0)",
+      "Proprietary",
+      "Not stated",
+      "Don't know",
+      "Other"
+    ]
+  },
+  {
+    "id": "year_release",
+    "text": "If available, what was the year of release?",
+    "type": "integer",
+    "required": false
+  },
+  {
+    "id": "year_lastupdate",
+    "text": "If known, in what year was it last updated?",
+    "type": "integer",
+    "required": false
+  },
+  {
+    "id": "access_barrier",
+    "text": "Is there any barrier to accessing the data?",
+    "type": "tag",
+    "required": true,
+    "fair": "A1",
+    "answers": [
+      "No, direct download/access through a web link",
+      "User registration needed",
+      "Access to the data needs to be granted (e.g. dataset owner needs to give permission after user registration; dataset owner sends data after receiving a request email)",
+      "Access to the data is evaluated before being granted, due to ethical, legal or contractual constrains (e.g. privacy, highly sensitive data)"
+    ]
+  },
+  {
+    "id": "data_formats",
+    "text": "What is the format of the data?",
+    "type": "array of tags",
+    "required": false,
+    "fair": "I1",
+    "answers": [
+      "Widely used file formats (CSV, JSON, GeoJSON, XML, TIFF, MP3, MP4, etc.)",
+      "Custom file formats (database specific, not widely used)",
+      "Static content (e.g. textual, reports on website pages, tables and graphs, PDF files)",
+      "Other"
+    ]
+  },
+  {
+    "id": "data_formats",
+    "text": "Does the metadata file follow any controlled vocabularies, keywords, thesauri or ontologies?",
+    "type": "tag",
+    "required": false,
+    "fair": "I2",
+    "answers": [
+      "Yes",
+      "No",
+      "Don't know"
+    ]
+  },
+  {
+    "id": "listed_other_databases",
+    "text": "Is the dataset also listed in other databases?",
+    "type": "tag",
+    "required": false,
+    "fair": "F3",
+    "answers": [
+      "Yes",
+      "No",
+      "Don't know"
+    ]
+  },
+  {
+    "id": "data_metadata",
+    "text": "The dataset has an associated metadata file (e.g. XML, md), where the dataset details are described?",
+    "type": "tag",
+    "required": true,
+    "fair": "F2",
+    "answers": [
+      "Yes",
+      "No"
+    ]
+  },
+  {
+    "id": "documentation_accessible",
+    "text": "Is the metadata file, or documentation, fully accessible, even if the data may not be publicly available?",
+    "type": "tag",
+    "required": true,
+    "fair": "A2",
+    "answers": [
+      "Yes",
+      "Some of it",
+      "No",
+      "Don't know"
+    ]
+  },
+  {
+    "id": "development_process",
+    "text": "It is clear how, why and by whom the data have been created and processed?",
+    "type": "tag",
+    "required": true,
+    "fair": "R3",
+    "answers": [
+      "Yes",
+      "Not completely",
+      "No",
+      "Don't know"
+    ]
+  },
+  {
+    "id": "development_process",
+    "text": "The data is accurate and well described with many relevant attributes?",
+    "type": "tag",
+    "required": true,
+    "fair": "R1",
+    "answers": [
+      "Yes",
+      "Not completely",
+      "No",
+      "Don't know"
+    ]
+  },
+  {
+    "id": "documentation_list",
+    "text": "Indicate the associated publication(s) or other documentation related with the dataset.",
+    "type": "string",
+    "required": false
+  },
+  {
+    "id": "digitaf_data_ll",
+    "text": "If applicable, in which DigitAF Living Labs is the data being used?",
+    "short_text": "Used in DigitAF Living Labs",
+    "type": "array of tags",
+    "required": false,
+    "answers": [
+      "Czech Republic LL",
+      "Finland LL",
+      "Germany LL",
+      "Italy LL",
+      "Netherlands LL",
+      "United Kingdom LL"
+    ]
   }
 ]
